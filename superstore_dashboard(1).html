@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><base href="https://d16ilfvy4mv02r.cloudfront.net/workspaces/CVGIaTchF9EoAx6qcQF57Wn7hAfxntb6/1b95a15f-5b59-49ca-ba12-82e53aad5a9f/files/">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Superstore Sales Dashboard</title>
+<style>
+  :root{
+    --indigo:#6366f1; --violet:#8b5cf6; --pink:#ec4899; --amber:#f59e0b;
+    --emerald:#10b981; --cyan:#06b6d4; --red:#ef4444; --lime:#a3e635;
+    --ink:#0b1020; --panel:rgba(255,255,255,.055); --line:rgba(255,255,255,.10);
+    --txt:#eef2ff; --muted:#a5b4cf;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",Inter,system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    color:var(--txt);
+    background:
+      radial-gradient(1100px 700px at 8% -10%, rgba(99,102,241,.42), transparent 60%),
+      radial-gradient(900px 600px at 95% 0%, rgba(236,72,153,.32), transparent 55%),
+      radial-gradient(900px 700px at 50% 115%, rgba(6,182,212,.28), transparent 60%),
+      linear-gradient(160deg,#0b1020 0%, #141a33 55%, #0b1020 100%);
+    min-height:100vh; padding:28px clamp(14px,3vw,44px) 60px;
+  }
+  .wrap{max-width:1320px;margin:0 auto}
+
+  /* ---------- header ---------- */
+  header.top{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+  .brand{display:flex;gap:14px;align-items:center}
+  .logo{
+    width:52px;height:52px;border-radius:16px;flex:0 0 auto;
+    background:conic-gradient(from 210deg,var(--indigo),var(--cyan),var(--emerald),var(--amber),var(--pink),var(--indigo));
+    box-shadow:0 12px 30px rgba(99,102,241,.45); display:grid;place-items:center;font-weight:800;font-size:20px;color:#fff;
+  }
+  h1{margin:0;font-size:clamp(21px,2.4vw,29px);letter-spacing:-.02em;
+     background:linear-gradient(92deg,#fff 10%,#c7d2fe 45%,#f9a8d4 90%);
+     -webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+  .sub{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+  .pills{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{
+    font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(255,255,255,.05);color:#dbe4ff;white-space:nowrap
+  }
+  .pill.solid{background:linear-gradient(90deg,rgba(99,102,241,.9),rgba(236,72,153,.9));border-color:transparent;font-weight:600}
+
+  /* ---------- layout ---------- */
+  .grid{display:grid;gap:16px}
+  .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .two{grid-template-columns:1.05fr .95fr}
+  .two2{grid-template-columns:1fr 1fr}
+  @media(max-width:980px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.two,.two2{grid-template-columns:1fr}}
+
+  /* ---------- cards ---------- */
+  .card{
+    position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;
+    padding:18px 18px 14px;overflow:hidden;backdrop-filter:blur(9px);
+    box-shadow:0 18px 44px rgba(3,7,18,.45)
+  }
+  .card::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--accent,linear-gradient(90deg,var(--indigo),var(--pink)))}
+  .card h2{margin:0 0 2px;font-size:14.5px;letter-spacing:.01em;font-weight:650}
+  .card .hint{margin:0 0 12px;color:var(--muted);font-size:11.5px}
+
+  .kpi .label{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:#b9c6e6;font-weight:600}
+  .kpi .value{font-size:clamp(24px,2.5vw,31px);font-weight:800;letter-spacing:-.02em;margin:8px 0 4px;
+              background:var(--g,linear-gradient(90deg,#fff,#c7d2fe));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .kpi .delta{font-size:12px;color:#93a4c7}
+  .kpi .delta b{color:var(--emerald)}
+  .spark{position:absolute;right:14px;top:14px;width:64px;height:34px;opacity:.85}
+
+  .k1{--accent:linear-gradient(90deg,var(--indigo),var(--cyan));--g:linear-gradient(90deg,#c7d2fe,#67e8f9)}
+  .k2{--accent:linear-gradient(90deg,var(--emerald),var(--lime));--g:linear-gradient(90deg,#a7f3d0,#bef264)}
+  .k3{--accent:linear-gradient(90deg,var(--amber),var(--pink));--g:linear-gradient(90deg,#fde68a,#f9a8d4)}
+  .k4{--accent:linear-gradient(90deg,var(--violet),var(--pink));--g:linear-gradient(90deg,#ddd6fe,#fbcfe8)}
+
+  .mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  @media(max-width:700px){.mini{grid-template-columns:1fr}}
+  .mini .m{border:1px solid var(--line);border-radius:14px;padding:12px 13px;background:rgba(255,255,255,.035)}
+  .mini .m .t{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#b9c6e6;font-weight:600}
+  .mini .m .v{font-size:14.5px;font-weight:650;margin-top:6px;line-height:1.35}
+  .mini .m .n{font-size:11.5px;color:var(--muted);margin-top:3px}
+
+  svg{display:block;width:100%;height:auto}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;font-size:11.5px;color:#c3cee8}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:right;padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.07)}
+  th:first-child,td:first-child{text-align:left}
+  th{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:#a9b8d8;font-weight:600}
+  tbody tr:hover{background:rgba(255,255,255,.05)}
+  td.neg{color:#fca5a5;font-weight:650}
+  td.pos{color:#86efac}
+  tfoot td{font-weight:750;border-bottom:none;background:rgba(255,255,255,.04)}
+
+  .bar-track{position:relative;height:7px;border-radius:999px;background:rgba(255,255,255,.09);overflow:hidden}
+  .bar-fill{position:absolute;inset:0 auto 0 0;border-radius:999px}
+
+  .callout{display:flex;gap:13px;align-items:flex-start;border-radius:15px;padding:14px 16px;
+    background:linear-gradient(100deg,rgba(239,68,68,.18),rgba(245,158,11,.14));
+    border:1px solid rgba(248,113,113,.36)}
+  .callout .ico{font-size:19px;line-height:1}
+  .callout h3{margin:0 0 5px;font-size:13.5px;font-weight:700;color:#ffe4e6}
+  .callout p{margin:0;font-size:12.5px;color:#f3d7d7;line-height:1.55}
+  footer{margin-top:26px;text-align:center;color:#7f8db0;font-size:11.5px}
+  .reveal{animation:rise .5s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="logo">S</div>
+      <div>
+        <h1>Superstore Sales Performance</h1>
+        <p class="sub">9,994 order lines · 5,009 orders · 793 customers · USD</p>
+      </div>
+    </div>
+    <div class="pills">
+      <span class="pill solid">2014 → 2017</span>
+      <span class="pill">All regions</span>
+      <span class="pill">All segments</span>
+      <span class="pill">12.5% margin</span>
+    </div>
+  </header>
+
+  <div class="grid kpis" style="margin-bottom:16px">
+    <div class="card kpi k1 reveal">
+      <div class="label">Total Sales</div>
+      <div class="value">$2,297,201</div>
+      <div class="delta"><b>+51%</b> vs 2014 ($484,248)</div>
+      <svg class="spark" viewBox="0 0 64 34" id="spark1"></svg>
+    </div>
+    <div class="card kpi k2 reveal">
+      <div class="label">Total Profit</div>
+      <div class="value">$286,397</div>
+      <div class="delta"><b>+89%</b> vs 2014 ($49,544)</div>
+      <svg class="spark" viewBox="0 0 64 34" id="spark2"></svg>
+    </div>
+    <div class="card kpi k3 reveal">
+      <div class="label">Profit Margin</div>
+      <div class="value">12.5%</div>
+      <div class="delta">10.2% → 12.7% over the period</div>
+      <svg class="spark" viewBox="0 0 64 34" id="spark3"></svg>
+    </div>
+    <div class="card kpi k4 reveal">
+      <div class="label">Orders / AOV</div>
+      <div class="value">5,009</div>
+      <div class="delta">$458.61 avg order · 37,873 units</div>
+      <svg class="spark" viewBox="0 0 64 34" id="spark4"></svg>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-bottom:16px">
+    <div class="card reveal" style="--accent:linear-gradient(90deg,var(--indigo),var(--pink),var(--amber))">
+      <h2>Monthly Sales &amp; Profit</h2>
+      <p class="hint">Revenue peaks Sep–Dec; margin does not follow — peak-season discounts buy volume, not profit.</p>
+      <svg id="trend" viewBox="0 0 900 330" role="img" aria-label="Monthly sales and profit line chart"></svg>
+      <div class="legend">
+        <span><i style="background:#818cf8"></i>Sales</span>
+        <span><i style="background:#34d399"></i>Profit</span>
+        <span style="color:#8fa0c4">hover a point for the exact month</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid two" style="margin-bottom:16px">
+    <div class="card reveal" style="--accent:linear-gradient(90deg,var(--cyan),var(--indigo))">
+      <h2>Sales &amp; Profit by Region</h2>
+      <p class="hint">Central earns 69% of West's revenue but only 37% of its profit.</p>
+      <svg id="region" viewBox="0 0 560 300" role="img" aria-label="Sales and profit by region"></svg>
+      <div class="legend">
+        <span><i style="background:#38bdf8"></i>Sales</span>
+        <span><i style="background:#34d399"></i>Profit</span>
+      </div>
+    </div>
+    <div class="card reveal" style="--accent:linear-gradient(90deg,var(--violet),var(--pink))">
+      <h2>Category Mix</h2>
+      <p class="hint">Share of the $2.30M in revenue.</p>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+        <svg id="donut" viewBox="0 0 240 240" style="max-width:240px;flex:0 0 240px" role="img" aria-label="Category mix donut"></svg>
+        <div style="flex:1 1 160px" id="donutLegend"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-bottom:16px">
+    <div class="card reveal" style="--accent:linear-gradient(90deg,var(--emerald),var(--amber),var(--red))">
+      <h2>Profit by Sub-Category</h2>
+      <p class="hint">Tables burn $17.7k; Copiers and Paper carry the margin.</p>
+      <svg id="subcat" viewBox="0 0 900 430" role="img" aria-label="Profit by sub-category"></svg>
+    </div>
+  </div>
+
+  <div class="grid two2" style="margin-bottom:16px">
+    <div class="card reveal" style="--accent:linear-gradient(90deg,var(--amber),var(--red))">
+      <h2>Profit by Discount Band</h2>
+      <p class="hint">Every band above 20% loses money.</p>
+      <svg id="band" viewBox="0 0 560 290" role="img" aria-label="Profit by discount band"></svg>
+      <div class="legend">
+        <span><i style="background:#fbbf24"></i>Sales</span>
+        <span><i style="background:#f87171"></i>Profit</span>
+      </div>
+    </div>
+    <div class="card reveal" style="--accent:linear-gradient(90deg,var(--indigo),var(--emerald))">
+      <h2>Segment &amp; Ship Mode</h2>
+      <p class="hint">Home Office is smallest but most profitable; Standard Class moves 59% of revenue.</p>
+      <table>
+        <thead><tr><th>Segment</th><th>Sales</th><th>Profit</th><th>Margin</th></tr></thead>
+        <tbody id="segTable"></tbody>
+      </table>
+      <table style="margin-top:14px">
+        <thead><tr><th>Ship mode</th><th>Orders</th><th>Sales</th><th>Avg days</th></tr></thead>
+        <tbody id="shipTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid two2">
+    <div class="card reveal" style="--accent:linear-gradient(90deg,var(--pink),var(--violet))">
+      <h2>Top States by Revenue</h2>
+      <p class="hint">Four of them are the biggest loss centres.</p>
+      <table>
+        <thead><tr><th>State</th><th>Sales</th><th>Profit</th><th>Margin</th></tr></thead>
+        <tbody id="stateTable"></tbody>
+      </table>
+    </div>
+    <div class="card reveal" style="--accent:linear-gradient(90deg,var(--red),var(--amber))">
+      <h2 style="margin-bottom:12px">Where the profit leaks</h2>
+      <div class="callout">
+        <div class="ico">⚠️</div>
+        <div>
+          <h3>$64,762 lost to discounts above 20%</h3>
+          <p>Only 13% of revenue sits in the 21%+ discount bands, yet it consumes 22.6% of the profit earned above the line. Furniture runs at a 2.5% margin, Tables alone lose $17.7k, and Texas, Ohio, Pennsylvania and Illinois are all negative. <strong>18.7% of order lines (1,871) are unprofitable</strong>, totalling −$156,131.</p>
+        </div>
+      </div>
+      <div class="mini" style="margin-top:14px">
+        <div class="m"><div class="t">Cap discounts</div><div class="v">Stop at 20%</div><div class="n">Recovers up to $64.8k</div></div>
+        <div class="m"><div class="t">Fix Furniture</div><div class="v">Reprice Tables</div><div class="n">32% of revenue, 6% of profit</div></div>
+        <div class="m"><div class="t">Audit Central</div><div class="v">7.9% vs 14.9%</div><div class="n">~$35k a year at stake</div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Superstore sample · generated from a Python analysis of 9,994 order lines · all figures trace to the source CSV</footer>
+</div>
+
+<script>
+const NS='http://www.w3.org/2000/svg';
+const E=(n,a)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;};
+const money=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'M':(Math.abs(v)>=1000?'$'+Math.round(v/1000)+'k':'$'+Math.round(v));
+const money2=v=>(v<0?'-$':'$')+Math.abs(Math.round(v)).toLocaleString('en-US');
+const pct=v=>v.toFixed(1)+'%';
+
+const MONTHLY=[
+ ['2014-01',14237,2450],['2014-02',4520,862],['2014-03',55691,499],['2014-04',28295,3489],
+ ['2014-05',23648,2739],['2014-06',34595,4977],['2014-07',33946,-841],['2014-08',27909,5318],
+ ['2014-09',81777,8328],['2014-10',31453,3448],['2014-11',78629,9292],['2014-12',69546,8984],
+ ['2015-01',18174,-3281],['2015-02',11951,2814],['2015-03',38726,9732],['2015-04',34195,4187],
+ ['2015-05',30132,4668],['2015-06',24797,3336],['2015-07',28765,3289],['2015-08',36898,5356],
+ ['2015-09',64596,8209],['2015-10',31405,2817],['2015-11',75973,12475],['2015-12',74920,8017],
+ ['2016-01',18542,2825],['2016-02',22979,5005],['2016-03',51716,3612],['2016-04',38750,2978],
+ ['2016-05',56988,8662],['2016-06',40345,4750],['2016-07',39262,4433],['2016-08',31115,2062],
+ ['2016-09',73410,9329],['2016-10',59688,16243],['2016-11',79412,4011],['2016-12',96999,17885],
+ ['2017-01',43971,7140],['2017-02',20301,1614],['2017-03',58872,14752],['2017-04',36522,933],
+ ['2017-05',44261,6343],['2017-06',52982,8223],['2017-07',45264,6953],['2017-08',63121,9041],
+ ['2017-09',87867,10992],['2017-10',77777,9275],['2017-11',118448,9690],['2017-12',83829,8483]
+];
+const REGION=[{n:'West',s:725458,p:108418,m:14.9},{n:'East',s:678781,p:91523,m:13.5},
+              {n:'Central',s:501240,p:39706,m:7.9},{n:'South',s:391722,p:46749,m:11.9}];
+const CAT=[{n:'Technology',s:836154,p:145455,c:'#818cf8'},{n:'Office Supplies',s:719047,p:122491,c:'#34d399'},
+           {n:'Furniture',s:742000,p:18451,c:'#fbbf24'}];
+const SUB=[['Copiers',55618],['Phones',44516],['Accessories',41937],['Paper',34054],['Binders',30222],
+ ['Chairs',26590],['Storage',21279],['Appliances',18138],['Furnishings',13059],['Envelopes',6964],
+ ['Art',6528],['Labels',5546],['Machines',3385],['Fasteners',950],['Supplies',-1189],
+ ['Bookcases',-3473],['Tables',-17725]];
+const BAND=[{n:'0%',s:1087908,p:320988},{n:'1–20%',s:846522,p:100785},
+            {n:'21–40%',s:234138,p:-35817},{n:'41%+',s:71048,p:-28944}];
+const SEG=[['Consumer',1161401,134119,11.5],['Corporate',706146,91979,13.0],['Home Office',429653,60299,14.0]];
+const SHIP=[['Standard Class',2994,1358216,5.01],['Second Class',964,459194,3.24],
+            ['First Class',787,351428,2.18],['Same Day',264,128363,0.04]];
+const STATE=[['California',457688,76381,17.0],['New York',310876,74039,24.0],['Washington',138641,33403,24.0],
+ ['Texas',170188,-25729,-15.1],['Pennsylvania',116512,-15560,-13.4],['Ohio',78258,-16971,-21.7],
+ ['Illinois',80166,-12608,-15.7]];
+
+/* ---------------- sparklines ---------------- */
+function spark(id,vals,color){
+  const svg=document.getElementById(id); if(!svg) return;
+  const w=64,h=34,mn=Math.min(...vals),mx=Math.max(...vals),sp=mx-mn||1;
+  const pts=vals.map((v,i)=>[i*(w/(vals.length-1)),h-2-((v-mn)/sp)*(h-6)]);
+  const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const gid='g'+id;
+  const defs=E('defs',{});const lg=E('linearGradient',{id:gid,x1:0,y1:0,x2:0,y2:1});
+  lg.appendChild(E('stop',{offset:'0%','stop-color':color,'stop-opacity':.55}));
+  lg.appendChild(E('stop',{offset:'100%','stop-color':color,'stop-opacity':0}));
+  defs.appendChild(lg);svg.appendChild(defs);
+  svg.appendChild(E('path',{d:d+` L${w} ${h} L0 ${h} Z`,fill:`url(#${gid})`,stroke:'none'}));
+  svg.appendChild(E('path',{d:d,fill:'none',stroke:color,'stroke-width':1.8,'stroke-linecap':'round'}));
+}
+const yearlySales=[484248,470533,609206,733215], yearlyProfit=[49544,61619,81795,93439];
+spark('spark1',yearlySales,'#a5b4fc');
+spark('spark2',yearlyProfit,'#6ee7b7');
+spark('spark3',[10.2,13.1,13.4,12.7],'#fcd34d');
+spark('spark4',[969,1038,1315,1687],'#f0abfc');
+
+/* ---------------- trend line ---------------- */
+(function(){
+  const svg=document.getElementById('trend'),W=900,H=330,P={t:18,r:16,b:36,l:58};
+  const sales=MONTHLY.map(d=>d[1]), profit=MONTHLY.map(d=>d[2]);
+  const mx=Math.max(...sales), mn=Math.min(0,...profit);
+  const X=i=>P.l+i*(W-P.l-P.r)/(MONTHLY.length-1);
+  const Y=v=>P.t+(mx-v)/(mx-mn)*(H-P.t-P.b);
+  const defs=E('defs',{});
+  const lg=E('linearGradient',{id:'areaSales',x1:0,y1:0,x2:0,y2:1});
+  lg.appendChild(E('stop',{offset:'0%','stop-color':'#6366f1','stop-opacity':.55}));
+  lg.appendChild(E('stop',{offset:'100%','stop-color':'#6366f1','stop-opacity':0}));
+  defs.appendChild(lg); svg.appendChild(defs);
+
+  for(let i=0;i<=4;i++){
+    const v=mn+(mx-mn)*(i/4), y=Y(v);
+    svg.appendChild(E('line',{x1:P.l,y1:y,x2:W-P.r,y2:y,stroke:'rgba(255,255,255,.09)','stroke-width':1}));
+    const t=E('text',{x:P.l-10,y:y+4,fill:'#8ea0c6','font-size':11,'text-anchor':'end'});
+    t.textContent=money(v); svg.appendChild(t);
+  }
+  const sp=sales.map((v,i)=>`${i?'L':'M'}${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ');
+  svg.appendChild(E('path',{d:sp+` L${X(sales.length-1)} ${Y(mn)} L${X(0)} ${Y(mn)} Z`,fill:'url(#areaSales)'}));
+  svg.appendChild(E('path',{d:sp,fill:'none',stroke:'#818cf8','stroke-width':2.4,'stroke-linejoin':'round'}));
+  const pp=profit.map((v,i)=>`${i?'L':'M'}${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ');
+  svg.appendChild(E('path',{d:pp,fill:'none',stroke:'#34d399','stroke-width':2.2,'stroke-linejoin':'round','stroke-dasharray':'0'}));
+  MONTHLY.forEach((d,i)=>{
+    if(i%6===0||i===MONTHLY.length-1){
+      const t=E('text',{x:X(i),y:H-12,fill:'#8ea0c6','font-size':11,'text-anchor':'middle'});
+      t.textContent=d[0]; svg.appendChild(t);
+    }
+    const c=E('circle',{cx:X(i),cy:Y(d[1]),r:9,fill:'transparent'});
+    const tt=document.createElementNS(NS,'title');
+    tt.textContent=d[0]+' · Sales '+money2(d[1])+' · Profit '+money2(d[2]);
+    c.appendChild(tt); svg.appendChild(c);
+  });
+})();
+
+/* ---------------- grouped bars (region / band) ---------------- */
+function grouped(id,rows,padL,w,h,series){
+  const svg=document.getElementById(id);
+  const maxV=Math.max(...rows.flatMap(r=>series.map(s=>r[s.key])));
+  const minV=Math.min(0,...rows.flatMap(r=>series.map(s=>r[s.key])));
+  const top=20,bot=h-38,left=padL,right=w-12;
+  const scale=v=>top+(maxV-v)/(maxV-minV||1)*(bot-top);
+  for(let i=0;i<=4;i++){
+    const v=minV+(maxV-minV)*(i/4), y=scale(v);
+    svg.appendChild(E('line',{x1:left,y1:y,x2:right,y2:y,stroke:'rgba(255,255,255,.09)'}));
+    const t=E('text',{x:left-8,y:y+4,fill:'#8ea0c6','font-size':10.5,'text-anchor':'end'});
+    t.textContent=money(v); svg.appendChild(t);
+  }
+  const gw=(right-left)/rows.length, bw=Math.min(34,gw/(series.length+1.6));
+  rows.forEach((r,ri)=>{
+    const gx=left+ri*gw+(gw-(bw*series.length+6*(series.length-1)))/2;
+    series.forEach((s,si)=>{
+      const v=r[s.key], y0=scale(0), y1=scale(v);
+      const bar=E('rect',{x:gx+si*(bw+6),y:Math.min(y0,y1),width:bw,
+        height:Math.max(2,Math.abs(y1-y0)),rx:5,fill:s.color});
+      const tt=document.createElementNS(NS,'title');
+      tt.textContent=`${r.n} · ${s.label}: ${money2(v)}`;
+      bar.appendChild(tt); svg.appendChild(bar);
+    });
+    const t=E('text',{x:left+ri*gw+gw/2,y:bot+22,fill:'#c3cee8','font-size':12,'text-anchor':'middle'});
+    t.textContent=r.n; svg.appendChild(t);
+    if(r.m!==undefined){
+      const m=E('text',{x:left+ri*gw+gw/2,y:bot+38,fill:r.m<10?'#fca5a5':'#93a4c7','font-size':10.5,'text-anchor':'middle'});
+      m.textContent=pct(r.m)+' margin'; svg.appendChild(m);
+    }
+  });
+  svg.appendChild(E('line',{x1:left,y1:scale(0),x2:right,y2:scale(0),stroke:'rgba(255,255,255,.28)'}));
+}
+grouped('region',REGION,58,560,300,
+  [{key:'s',label:'Sales',color:'#38bdf8'},{key:'p',label:'Profit',color:'#34d399'}]);
+grouped('band',BAND,58,560,290,
+  [{key:'s',label:'Sales',color:'#fbbf24'},{key:'p',label:'Profit',color:'#f87171'}]);
+
+/* ---------------- donut ---------------- */
+(function(){
+  const svg=document.getElementById('donut');
+  const total=CAT.reduce((a,c)=>a+c.s,0);
+  let ang=-Math.PI/2;
+  const cx=120,cy=120,r=88,thick=30;
+  CAT.forEach(c=>{
+    const a0=ang, a1=ang+(c.s/total)*Math.PI*2; ang=a1;
+    const large=(a1-a0)>Math.PI?1:0;
+    const p0=[cx+r*Math.cos(a0),cy+r*Math.sin(a0)], p1=[cx+r*Math.cos(a1),cy+r*Math.sin(a1)];
+    const i0=[cx+(r-thick)*Math.cos(a1),cy+(r-thick)*Math.sin(a1)];
+    const i1=[cx+(r-thick)*Math.cos(a0),cy+(r-thick)*Math.sin(a0)];
+    const d=`M${p0} A${r} ${r} 0 ${large} 1 ${p1} L${i0} A${r-thick} ${r-thick} 0 ${large} 0 ${i1} Z`;
+    const path=E('path',{d,fill:c.c,opacity:.92});
+    const tt=document.createElementNS(NS,'title');
+    tt.textContent=`${c.n} · ${money2(c.s)} (${(c.s/total*100).toFixed(1)}%) · ${pct(c.p/c.s*100)} margin`;
+    path.appendChild(tt); svg.appendChild(path);
+  });
+  const v=E('text',{x:cx,y:cy-2,fill:'#fff','font-size':22,'font-weight':800,'text-anchor':'middle'});
+  v.textContent='$2.30M'; svg.appendChild(v);
+  const l=E('text',{x:cx,y:cy+20,fill:'#93a4c7','font-size':11,'text-anchor':'middle'});
+  l.textContent='net revenue'; svg.appendChild(l);
+
+  const lg=document.getElementById('donutLegend');
+  lg.innerHTML=CAT.map(c=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.07)">
+      <span style="font-size:12.5px"><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${c.c};margin-right:8px"></i>${c.n}</span>
+      <span style="font-size:12px;color:#c3cee8;text-align:right">${money(c.s)}<br><span style="color:${c.p/c.s*100<5?'#fca5a5':'#86efac'};font-size:11px">${pct(c.p/c.s*100)}</span></span>
+    </div>`).join('');
+})();
+
+/* ---------------- sub-category diverging ---------------- */
+(function(){
+  const svg=document.getElementById('subcat'),W=900,H=430;
+  const left=140,right=W-70,top=14,rowH=(H-top-30)/SUB.length;
+  const maxP=Math.max(...SUB.map(d=>d[1])), minP=Math.min(...SUB.map(d=>d[1]));
+  const span=maxP-minP||1;
+  const X=v=>left+((v-minP)/span)*(right-left);
+  const zx=X(0);
+  SUB.forEach((d,i)=>{
+    const y=top+i*rowH, h=Math.min(15,rowH-5);
+    const x0=Math.min(zx,X(d[1])), w=Math.max(2,Math.abs(X(d[1])-zx));
+    const color=d[1]<0?'#f87171':(d[1]>30000?'#34d399':'#818cf8');
+    const bar=E('rect',{x:x0,y:y,width:w,height:h,rx:4,fill:color,opacity:.95});
+    const tt=document.createElementNS(NS,'title');
+    tt.textContent=`${d[0]} · ${money2(d[1])}`;
+    bar.appendChild(tt); svg.appendChild(bar);
+    const lab=E('text',{x:left-12,y:y+h/2+4,fill:'#c3cee8','font-size':11.5,'text-anchor':'end'});
+    lab.textContent=d[0]; svg.appendChild(lab);
+    const val=E('text',{x:d[1]<0?X(d[1])-8:X(d[1])+8,y:y+h/2+4,fill:d[1]<0?'#fca5a5':'#dbe4ff',
+      'font-size':11,'text-anchor':d[1]<0?'end':'start'});
+    val.textContent=money(d[1]); svg.appendChild(val);
+  });
+  svg.appendChild(E('line',{x1:zx,y1:top,x2:zx,y2:H-18,stroke:'rgba(255,255,255,.3)','stroke-dasharray':'3 3'}));
+  svg.appendChild(E('line',{x1:left,y1:H-18,x2:right,y2:H-18,stroke:'rgba(255,255,255,.14)'}));
+})();
+
+/* ---------------- tables ---------------- */
+const row=(cells,cls)=>'<tr>'+cells.map((c,i)=>`<td class="${i?'':''}${typeof c==='string'&&c.startsWith('-')?' neg':''}">${c}</td>`).join('')+'</tr>';
+document.getElementById('segTable').innerHTML=SEG.map(s=>`<tr><td>${s[0]}</td><td>${money(s[1])}</td>
+  <td class="${s[2]<0?'neg':'pos'}">${money2(s[2])}</td><td>${pct(s[3])}</td></tr>`).join('');
+document.getElementById('shipTable').innerHTML=SHIP.map(s=>`<tr><td>${s[0]}</td><td>${s[1].toLocaleString()}</td>
+  <td>${money(s[2])}</td><td>${s[3].toFixed(2)}</td></tr>`).join('');
+document.getElementById('stateTable').innerHTML=STATE.map(s=>`<tr><td>${s[0]}</td><td>${money2(s[1])}</td>
+  <td class="${s[2]<0?'neg':'pos'}">${money2(s[2])}</td>
+  <td class="${s[3]<0?'neg':''}">${pct(s[3])}</td></tr>`).join('');
+</script>
+</body>
+</html>
